@@ -110,9 +110,14 @@ strip_reasoning() {
   echo "$1" | sed 's/<think>.*<\/think>//g' | sed '/<think>/,/<\/think>/d'
 }
 
+strip_markdown_fences() {
+  # Remove markdown code fences (```bash, ```sh, ```, etc.)
+  echo "$1" | sed 's/^```[a-zA-Z]*$//' | sed 's/^```$//' | sed '/^$/d'
+}
+
 get_command() {
-  role="You translate the given input into a Linux command. You may not use natural language, but only a Linux shell command as an answer.
-  Do not use markdown. Do not quote the whole output. If you do not know the answer, answer with \"${fail_msg}\"."
+  role="You translate the given input into a Linux command. Reply with ONLY the command itself - no markdown, no code fences, no backticks, no explanation.
+  If you do not know the answer, answer with \"${fail_msg}\"."
 
   prompt="${role}
 
@@ -129,6 +134,7 @@ User request: ${commandDescription}"
   fi
 
   message=$(strip_reasoning "$message")
+  message=$(strip_markdown_fences "$message")
   command="${message}"
 }
 

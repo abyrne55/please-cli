@@ -8,7 +8,7 @@ An [AI helper script to create CLI commands](https://github.com/TNG/please-cli/)
 please <command description>
 ```
 
-This will call GPT to generate a Linux command based on your input.
+This will call Claude to generate a Linux command based on your input.
 
 ### Examples
 
@@ -35,10 +35,9 @@ You may then:
 
 ### Parameters
 - `-e` or `--explanation` will explain the command for you
-- `-l` or `--legacy` will use the GPT3.5 AI model instead of GPT4 (in case you don't have API access to GPT4)
+- `-l` or `--legacy` will use Sonnet instead of Haiku
 - `--debug` will display additional output
-- `-a` or `--api-key` will store your API key in the local keychain
-- `-m` or `--model` will query ChatGPT with the specified model
+- `-m` or `--model` will specify the model (haiku, sonnet, opus)
 - `-v` or `--version` will show the current version
 - `-h` or `--help` will show the help message
 ```
@@ -136,73 +135,33 @@ wget https://raw.githubusercontent.com/TNG/please-cli/main/please.sh
 sudo cp please.sh /usr/local/bin/please
 sudo chmod +x /usr/local/bin/please
 
-# Install jq and (if on Linux) secret-tool as well as xclip using the package manager of your choice
+# Install xclip (Linux) for clipboard support
 ```
 
 ## Prerequisites
 
-You need an OpenAI API key. You can get one here: https://beta.openai.com/. Once logged in, click your account in the top right corner and select "View API Keys". You can then create a new key using the "Create new secret key" button.
-
-The API key needs to be set:
-
-- either via an environment variable `OPENAI_API_KEY`,
-- or via a keychain entry `OPENAI_API_KEY` (macOS keychain and secret-tool on Linux are supported)
-
-The easiest way to set the API Key is to use the `please` command itself to do so:
+You need the Claude Code CLI installed and authenticated. Install it via:
 
 ```bash
-please -a
+npm install -g @anthropic-ai/claude-code
 ```
 
-This will set the API key in the keychain of your operating system (secret-tool on Linux, macOS keychain on MacOS).
-
-You can also set the API key via an environment variable, run
-
-```bash
-export OPENAI_API_KEY=<YOUR_API_KEY>
-```
-
-To store your API key yourself using secret-tool, run
-
-```bash
-secret-tool store --label="OPENAI_API_KEY" username "${USER}" key_name OPENAI_API_KEY apiKey "${apiKey}"
-```
-
-To store your API key using macOS keychain, run
-
-```bash
-security add-generic-password -a "${USER}" -s OPENAI_API_KEY -w "${apiKey}"
-```
+Then run `claude` once to authenticate with your Anthropic account.
 
 ## Configuration
 
-You can use the following OpenAI compatible environment variables:
-* `OPENAI_API_KEY` - Your OpenAI API key
-* `OPENAI_API_BASE` - The base URL for the OpenAI API
-* `OPENAI_API_VERSION` - The version of the OpenAI API
-
-You can use the more specific environment variables if you do not want to change OpenAI settings globally:
-* `PLEASE_OPENAI_API_KEY` - Your OpenAI API key
-* `PLEASE_OPENAI_API_BASE` - The base URL for the OpenAI API
-* `PLEASE_OPENAI_API_VERSION` - The version of the OpenAI API
-* `PLEASE_OPENAI_CHAT_MODEL` - The chat model to use
+You can use the following environment variable to change the default model:
+* `PLEASE_CLAUDE_MODEL` - The model to use (default: `haiku`)
 
 ## Troubleshooting
 
 If you receive the following error message:
 
 ```bash
-Error: Received HTTP status 404
+Error: Claude Code CLI not found. Please install it first.
 ```
 
-There probably is an issue with your base URL. Please check the OpenAI API base URL in your environment variables.
-
-
-```bash
-Error: Received HTTP status 401
-```
-
-There probably is an issue with your OpenAI API key. Please check the OpenAI API key in your environment variables.
+Make sure the Claude Code CLI is installed and available in your PATH. Run `claude --version` to verify.
 
 ## License
 
